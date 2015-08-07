@@ -1,6 +1,6 @@
 {
   "name": "nemo-accessibility",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "dependencies": {
     "request": "^2.48.0"
   },
