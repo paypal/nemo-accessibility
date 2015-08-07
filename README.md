@@ -1,6 +1,6 @@
 # nemo-accessibility
 
-nemo-accessibility is a nemo plugin aimed to run accessibility scans during nemo tests. nemo-accessibility plugin uses [PAET api][1] from [PAET][3] to run accessibility scans on a given page or on a given element on a page.
+nemo-accessibility is a nemo plugin aimed to run accessibility scans during nemo tests. nemo-accessibility plugin uses [AATT api][1] from [AATT][2] to run accessibility scans on a given page or on a given element on a page.
 
 
 ## Installation
@@ -20,7 +20,7 @@ Add nemo-accessibility to your `config/nemo-plugins.json` file.
 
 ## Details
 
-`nemo-accessibility` plugin uses PayPal's accessibility API to evaluate HTML source. Therefore you must specify API url under `nemoData` like below.
+`nemo-accessibility` plugin uses [AATT API][2] to evaluate HTML source. Therefore you must specify API url under `nemoData` like below.
 
  ```json
     "nemoData": {
@@ -37,7 +37,7 @@ Once `nemo-accessibility` plugin is registered, you should now have `nemo.access
  }
 ```
 
-`scan` method returns a promise with resulting `HTML` or `json` response from [PAET api][1] when fulfilled. You can then write the HTML to a file or parse JSON response for later reporting. For example,
+`scan` method returns a promise with resulting `HTML` or `json` response from [AATT api][1] when fulfilled. You can then write the HTML to a file or parse JSON response for later reporting. For example,
 
 ``` javascript
    nemo.driver.get('http://www.yahoo.com');
@@ -90,14 +90,15 @@ For example,
 ##Summary
 The idea behind this plugin is that during the course of nemo test, run accessibility scan;write the HTML output to a file or parse JSON for reporting;perform some selenium actions;run the scan again;report the output and so on.
 
-For more information on accessibility testing, guidelines and other tools, please refer [accessibility portal][2]
 
 ##Support
-Please contact Nilesh Kulkarni (nikulkarni@paypal.com) for any nemo plugin related questions and contact DL-PP-Accessibility-Core for any PAET related questions
+Please file a [Nemo a11y plugin issue][3]  for any nemo plugin related questions or file a [issue for AATT][4] for any AATT related questions
 
-[1]: https://paet.corp.ebay.com/evaluate "PAET api"
-[2]: https://uie.paypal.com/content/accessibility-testing "accessibility portal"
-[3]: https://github.paypal.com/accessibility/PAET "PAET"
+[1]: https://yourhostname/evaluate "AATT api"
+[2]: https://github.com/paypal/AATT "AATT"
+[3]: https://github.com/paypal/nemo-accessibility/issues "File a ticket for Nemo a11y plugin"
+[4]: https://github.com/paypal/AATT/issues "File a ticket for AATT"
+
 
 
 ## Copyright and License
