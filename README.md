@@ -9,7 +9,7 @@ nemo-accessibility is a nemo plugin aimed to run accessibility scans during nemo
 
 ## Configuration
 
-Add nemo-accessibility to your `config/nemo-plugins.json` file. 
+Add nemo-accessibility to your `config/nemo-plugins.json` file. Pass [AATT api][1] as a plugin argument like below
 
 ``` javascript
  "accessibility":{
@@ -20,11 +20,11 @@ Add nemo-accessibility to your `config/nemo-plugins.json` file.
 
 ## Details
 
-Once `nemo-accessibility` plugin is registered, you should now have `nemo.accessibility` object available in your tests. `nemo.accessibility` exposes a method called `scan` to help you run accessibility evaluation against your page. `scan` method takes an _optional_ object like below,
+Once `nemo-accessibility` plugin is registered, you should now have `nemo.accessibility` namespace available in your tests. `nemo.accessibility` exposes a method called `scan` to help you run accessibility evaluation against your page/element. `scan` method takes an _optional_ object like below,
 
 ```javascript
  var options = {
-    'priority': 'P1' or ['P1','P2','P3'], //expects either a string or an array; default is ALL priorities
+    'priority': 'P1' or ['P1','P2','P3'], //expects either a string or an array; default is ['P1','P2','P3','P4']
     'element': driver.findElement(wd.tagName('iframe')), //default is entire page
     'output': 'html' or 'json' //default is html
  }
@@ -35,23 +35,32 @@ Once `nemo-accessibility` plugin is registered, you should now have `nemo.access
 ``` javascript
    nemo.driver.get('http://www.paypal.com');
    nemo.accessibility.scan().then(function (result) {
-     fs.writeFile('test/functional/report/accessibility.html', result, function (err) {
-                 done();
+     fs.writeFile('report/accessibility.html', result, function (err) {
+         done();
      });
    });
 ```
-You could also run accessibility scan on a _certain_ _element_ like below. This is useful particularly when you already scanned an entire page, and lets say nemo test opened a dialog box; you can now only scan newly opened dialog box since you already scanned the rest of the page before.
+You could also run accessibility scan on a _certain_ _element_ like below. This is useful when lets say you scanned an entire page already, and subsequently a certain automated test interaction opened a dialog box; you can now only scan newly opened dialog box since you already scanned the rest of the page before.
+
+Here is a made up example, (note this example uses excellent [nemo-view](https://github.com/paypal/nemo-view) for finding elements)
 
 ```javascript
   it('will run scan on an element', function (done) {
         nemo.driver.get('http://www.paypal.com');
-        var element = nemo.driver.findElement(nemo.wd.By.tagName('video')),
+        nemo.accessibility.scan().then(function (result) {
+            fs.writeFile('report/entirePage.html',result,function (err) {
+               done();
+            });
+        });
+        var welcomePage = nemo.view.welcomePage;
+        welcomePage.buttonThatOpensAPopup().click();
+        var element = welcomePage.popup();,
             options = {
                 'priority': ['P1', 'P2'],
                 'element': element
             };
         nemo.accessibility.scan(options).then(function (result) {
-            fs.writeFile('test/functional/report/scanAnElement.html', result, function (err) {
+            fs.writeFile('report/scanAnElement.html', result, function (err) {
                 done();
             });
         });
@@ -81,7 +90,7 @@ For example,
     });
 ```
 ##Example
-In this project a sample code under `example/usingNemoAccessibility.js` is provided to demonstrate how to use `nemo-accessibility` plugin. As mentioned above nemo-accessibility plugin uses [AATT api][1] from [AATT][2] to run accessibility scans on a given page. Therefore to run the sample nemo-accessibility test, first we need to setup [AATT][2] which is pretty straightforward and should be done in a few minutes with steps below.
+In this project a sample `nemo-accessibility` plugin test is written under `example/usingNemoAccessibility.js`. As mentioned above `nemo-accessibility` plugin uses [AATT api][1] from [AATT][2] to run accessibility scans on a given page/element. Therefore to run the sample nemo-accessibility test, first we need to setup [AATT][2] which is pretty straightforward and should be done in a few minutes with steps below. If [AATT][2] is already setup, please skip this step
 
 ```bash
 git clone https://github.com/paypal/AATT.git
@@ -91,7 +100,7 @@ git submodule init
 git submodule update
 $ node app.js
 ```
-You can also find above instructions and details over [here](https://github.com/paypal/AATT#set-up)
+You can also find above instructions in detail over [here](https://github.com/paypal/AATT#set-up)
 
 Once AATT is running on default port of 80, you can switch back to `nemo-accessibility` project and run a sample test like below
 
