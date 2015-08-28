@@ -1,14 +1,16 @@
 {
   "name": "nemo-accessibility",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "dependencies": {
+    "debug": "^2.2.0",
     "request": "^2.48.0"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-simple-mocha": "^0.4.0",
-    "mocha": "^2.0.1"
+    "mocha": "^2.0.1",
+    "nemo": "^1.0.6"
   },
   "description": "nemo-accessibility plugin uses PAET api to run accessibility scans on a given page.",
   "main": "index.js",
@@ -18,9 +20,12 @@
   "scripts": {
     "test": "grunt"
   },
+  "peerDependencies": {
+    "nemo": "^1.0.6"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.paypal.com/accessibility/nemo-accessibility.git"
+    "url": "https://github.com/paypal/nemo-accessibility.git"
   },
   "keywords": [
     "nemo",
