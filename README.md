@@ -12,7 +12,7 @@ nemo-accessibility is a nemo plugin aimed to run accessibility scans during nemo
 Add nemo-accessibility to your `config/nemo-plugins.json` file. Pass [AATT api][1] as a plugin argument like below
 
 ``` javascript
- "accessibility":{
+ "nemo-accessibility":{
         "module":"nemo-accessibility",
         "arguments": ["https://your_nodejs_accessibility_server/evaluate"]
     }
