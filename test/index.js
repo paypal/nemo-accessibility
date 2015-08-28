@@ -1,14 +1,10 @@
 var Accessibility = require("../index"),
- returnObj = {
-   "driver": true,
-   "wd": true
-};
+ nemo = {};
 
 describe("nemo-accessibility ", function () {
    it("should get set up", function (done) {
-      Accessibility.setup({}, returnObj, function (err, config, returnObj) {
-         if (returnObj.accessibility) {
-            //console.log("user", returnObj.user);
+      Accessibility.setup('http://someurl', nemo, function (err) {
+         if (nemo.accessibility) {
             done()
          } else if (err) {
             done(err)
