@@ -3,7 +3,7 @@
     "browser": "firefox"
   },
   "plugins": {
-    "firefox-profile": {
+    "nemo-accessibility": {
       "module": "path:../",
       "arguments": ["http://127.0.0.1:80/evaluate"]
     }
