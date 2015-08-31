@@ -1,0 +1,11 @@
+{
+  "driver": {
+    "browser": "firefox"
+  },
+  "plugins": {
+    "nemo-accessibility": {
+      "module": "path:../",
+      "arguments": ["http://127.0.0.1:80/evaluate"]
+    }
+  }
+}
