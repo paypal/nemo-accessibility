@@ -17,7 +17,7 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
 
     var btn= nemo.view._find('css:#btnDonate');    
     btn.click();
-    nemo.driver.sleep(2000);
+    nemo.driver.sleep(2000);  //Just to show the form for some time
 
     var options = {
             'priority': ['P1', 'P2'],
