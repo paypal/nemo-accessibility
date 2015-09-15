@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "debug": "^2.2.0",
+    "nemo-view": "^1.2.0",
     "request": "^2.48.0"
   },
   "devDependencies": {
