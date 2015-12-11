@@ -126,4 +126,4 @@ Please file a [Nemo a11y plugin issue][3]  for any nemo plugin related questions
 
 ## Copyright and License
 
-Copyright 2015, eBay Software Foundation under [the BSD license](LICENSE.md).
+Copyright 2015, PayPal under [the BSD license](LICENSE.md).
