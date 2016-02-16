@@ -12,7 +12,8 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     log('Testing url: ' + url)
 
     var options = {
-      'priority': ['P1', 'P2', 'P3']
+      'priority': ['P1', 'P2', 'P3'],
+      'engine' : 'axe'
     };        
     nemo.accessibility.scan(options).then(function (result) {
         var file = process.cwd() + '/example/report/entirePage.html';
@@ -27,7 +28,8 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
 
     var options = {
             'priority': ['P1', 'P2'],
-            'source': 'btnDonate'
+            'source': 'btnDonate',
+            'engine' : 'htmlcs'
         };
     nemo.accessibility.scan(options).then(function (result) {
         var file = process.cwd() + '/example/report/scanAnElement.html';

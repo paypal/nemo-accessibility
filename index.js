@@ -18,6 +18,7 @@ module.exports = {
           priority = withPriority instanceof Array ? withPriority.toString() : withPriority,
           driver = options && options.element ? options.element : nemo.driver,
           scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
+          engine = options && options.engine ? options.engine : '',
           output = options && options.output ? options.output : '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
@@ -30,6 +31,7 @@ module.exports = {
           var body = {
               'source': source,
               'priority': priority,
+              'engine' : engine,
               'output': output
             },
             options = {
