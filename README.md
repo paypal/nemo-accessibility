@@ -42,22 +42,28 @@ Once `nemo-accessibility` plugin is registered, you should now have `nemo.access
 ```
 You could also run accessibility scan on a _certain_ _element_ like below. This is useful when lets say you scanned an entire page already, and subsequently a certain automated test interaction opened a dialog box; you can now only scan newly opened dialog box since you already scanned the rest of the page before.
 
-Here is a "made up" example, (note this example uses excellent [nemo-view](https://github.com/paypal/nemo-view) plugin for finding elements)
+Here is a [example](https://github.com/paypal/nemo-accessibility/blob/master/example/dynamicpage.js), (note this example uses excellent [nemo-view](https://github.com/paypal/nemo-view) plugin for finding elements)
 
 ```javascript
   it('will run scan on an element', function (done) {
         nemo.driver.get('http://www.paypal.com');
-        nemo.accessibility.scan().then(function (result) {
+        var options = {
+            'priority': ['P1', 'P2'],
+            'source': 'btnDonate',
+            'engine' : 'htmlcs'
+        };        
+        nemo.accessibility.scan(options).then(function (result) {
             fs.writeFile('report/entirePage.html',result,function (err) {
                done();
             });
         });
         var welcomePage = nemo.view.welcomePage;
         welcomePage.buttonThatOpensAPopup().click();
-        var element = welcomePage.popup();,
+        var element = welcomePage.popup(),
             options = {
                 'priority': ['P1', 'P2'],
-                'element': element
+                'element': element,
+                'engine' : 'axe'
             };
         nemo.accessibility.scan(options).then(function (result) {
             fs.writeFile('report/scanAnElement.html', result, function (err) {
@@ -126,4 +132,4 @@ Please file a [Nemo a11y plugin issue][3]  for any nemo plugin related questions
 
 ## Copyright and License
 
-Copyright 2015, PayPal under [the BSD license](LICENSE.md).
+Copyright 2016, PayPal under [the BSD license](LICENSE.md).
