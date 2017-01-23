@@ -14,11 +14,11 @@ module.exports = {
       'scan': function (options) {
 
         var d = nemo.wd.promise.defer(),
-          errLevel = options && options.errLevel || '1,2,3',
-          driver = options && options.element ? options.element : nemo.driver,
-          scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
-          engine = options && options.engine ? options.engine : '',
-          output = options && options.output ? options.output : '';
+            errLevel = options && options.errLevel || '1,2,3',
+            driver = options && options.element ? options.element : nemo.driver,
+            scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
+            engine = options && options.engine ? options.engine : '',
+            output = options && options.output ? options.output : '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
           log('Now scanning ', withPriority);
