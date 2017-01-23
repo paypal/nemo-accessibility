@@ -14,8 +14,7 @@ module.exports = {
       'scan': function (options) {
 
         var d = nemo.wd.promise.defer(),
-          withPriority = options && options.priority || ['P1', 'P2', 'P3', 'P4'],
-          priority = withPriority instanceof Array ? withPriority.toString() : withPriority,
+          errLevel = options && options.errLevel || '1,2,3',
           driver = options && options.element ? options.element : nemo.driver,
           scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
           engine = options && options.engine ? options.engine : '',
@@ -30,7 +29,7 @@ module.exports = {
           }
           var body = {
               'source': source,
-              'priority': priority,
+              'errLevel': errLevel,
               'engine' : engine,
               'output': output
             },
