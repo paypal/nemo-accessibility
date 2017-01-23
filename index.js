@@ -21,7 +21,7 @@ module.exports = {
             output = options && options.output ? options.output : '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
-          log('Now scanning ', withPriority);
+          log('Now scanning with error level ', errLevel);
           log('Accessibility url ', accessibilityApiUrl);
           if (!accessibilityApiUrl) {
             error('You must specify accessibilityApiUrl as a plugin argument');
