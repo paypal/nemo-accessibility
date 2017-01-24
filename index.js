@@ -14,15 +14,14 @@ module.exports = {
       'scan': function (options) {
 
         var d = nemo.wd.promise.defer(),
-          withPriority = options && options.priority || ['P1', 'P2', 'P3', 'P4'],
-          priority = withPriority instanceof Array ? withPriority.toString() : withPriority,
-          driver = options && options.element ? options.element : nemo.driver,
-          scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
-          engine = options && options.engine ? options.engine : '',
-          output = options && options.output ? options.output : '';
+            errLevel = options && options.errLevel || '1,2,3',
+            driver = options && options.element ? options.element : nemo.driver,
+            scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
+            engine = options && options.engine ? options.engine : '',
+            output = options && options.output ? options.output : '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
-          log('Now scanning ', withPriority);
+          log('Now scanning with error level ', errLevel);
           log('Accessibility url ', accessibilityApiUrl);
           if (!accessibilityApiUrl) {
             error('You must specify accessibilityApiUrl as a plugin argument');
@@ -30,7 +29,7 @@ module.exports = {
           }
           var body = {
               'source': source,
-              'priority': priority,
+              'errLevel': errLevel,
               'engine' : engine,
               'output': output
             },
