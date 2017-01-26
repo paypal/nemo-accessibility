@@ -15,6 +15,7 @@ module.exports = {
 
         var d = nemo.wd.promise.defer(),
             errLevel = options && options.errLevel || '1,2,3',
+            level = options && options.level || 'WCAG2AA',
             driver = options && options.element ? options.element : nemo.driver,
             scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
             engine = options && options.engine ? options.engine : '',
@@ -30,6 +31,7 @@ module.exports = {
           var body = {
               'source': source,
               'errLevel': errLevel,
+              'level' : level,
               'engine' : engine,
               'output': output
             },
