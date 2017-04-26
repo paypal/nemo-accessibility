@@ -14,7 +14,7 @@ module.exports = {
       'scan': function (options) {
 
         var d = nemo.wd.promise.defer(),
-            errLevel = options && options.errLevel || '1,2,3',
+            errLevel = options && options.errLevel || '1',
             level = options && options.level || 'WCAG2AA',
             driver = options && options.element ? options.element : nemo.driver,
             scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
@@ -22,6 +22,7 @@ module.exports = {
             output = options && options.output ? options.output : '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
+          // log('Page source:', source);
           log('Now scanning with error level ', errLevel);
           log('Accessibility url ', accessibilityApiUrl);
           if (!accessibilityApiUrl) {

@@ -5,10 +5,10 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     nemo.driver.get('http://www.paypal.com');
     console.log('Nemo initialized successfully');
     var options = {
-      'priority': ['P1', 'P2', 'P3']
+      'engine': 'chrome'
     };
     nemo.accessibility.scan(options).then(function (result) {
-      var file = process.cwd() + '/example/defaultOptions.html';
+      var file = process.cwd() + '/example/report/chrome.html';
       fs.writeFile(file, result, function (err) {
         if (err) {
           throw err;

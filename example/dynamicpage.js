@@ -12,7 +12,6 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     log('Testing url: ' + url)
 
     var options = {
-      'priority': ['P1', 'P2', 'P3'],
       'engine' : 'axe'
     };        
     nemo.accessibility.scan(options).then(function (result) {
@@ -27,7 +26,6 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     nemo.driver.sleep(2000);  //Just to show the form for some time
 
     var options = {
-            'priority': ['P1', 'P2'],
             'source': 'btnDonate',
             'engine' : 'htmlcs'
         };
