@@ -19,7 +19,9 @@ module.exports = {
             driver = options && options.element ? options.element : nemo.driver,
             scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
             engine = options && options.engine ? options.engine : '',
-            output = options && options.output ? options.output : '';
+            output = options && options.output ? options.output : '',
+            project = options && options.project || '',
+            page = options && options.page || '';
 
         scanElement.getAttribute('innerHTML').then(function (source) {
           // log('Page source:', source);
@@ -34,7 +36,9 @@ module.exports = {
               'errLevel': errLevel,
               'level' : level,
               'engine' : engine,
-              'output': output
+              'output': output,
+              'page' : page,
+              'project': project
             },
             options = {
               'headers': {

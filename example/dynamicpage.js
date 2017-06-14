@@ -12,7 +12,7 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     log('Testing url: ' + url)
 
     var options = {
-      'engine' : 'axe'
+      'engine' : 'chrome'
     };        
     nemo.accessibility.scan(options).then(function (result) {
         var file = process.cwd() + '/example/report/entirePage.html';

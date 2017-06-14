@@ -8,7 +8,7 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
       'engine': 'htmlcs'
     };
     nemo.accessibility.scan(options).then(function (result) {
-      var file = process.cwd() + '/example/report/htmlcs.html';
+      var file = process.cwd() + '/example/report/chrome1.html';
       fs.writeFile(file, result, function (err) {
         if (err) {
           throw err;
