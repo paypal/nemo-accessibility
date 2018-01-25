@@ -5,7 +5,16 @@
   "plugins": {
     "nemo-accessibility": {
       "module": "path:../",
-      "arguments": ["http://127.0.0.1:80/evaluate"]
+      // "arguments": ["http://127.0.0.1:80/evaluate" , "axe"]
+      "arguments": [
+                    {
+                      // "accessibilityApiUrl":"http://127.0.0.1:80/evaluate",
+                      "accessibilityApiUrl": ""
+                      , "engine":"axe"
+                      // , "engine":"chrome"
+                      // , "engine":"htmlcs"
+                    }
+                  ]
     },
     "view": {
       "module": "nemo-view"
