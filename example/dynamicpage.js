@@ -12,7 +12,7 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     log('Testing url: ' + url)
 
     var options = {
-      'engine' : 'chrome'
+      'engine' : 'axe'
     };        
     nemo.accessibility.scan(options).then(function (result) {
         var file = process.cwd() + '/example/report/entirePage.html';
@@ -22,12 +22,15 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     });
 
     var btn= nemo.view._find('css:#btnDonate');    
+    var scanElement= nemo.view._find('css:#myModal');    
+
     btn.click();
     nemo.driver.sleep(2000);  //Just to show the form for some time
 
     var options = {
             'source': 'btnDonate',
-            'engine' : 'htmlcs'
+            'element': scanElement,
+            'engine' : 'axe'
         };
     nemo.accessibility.scan(options).then(function (result) {
         var file = process.cwd() + '/example/report/scanAnElement.html';
