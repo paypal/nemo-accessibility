@@ -3,7 +3,8 @@ var request = require("request"),
   debug = require("debug"),
   fs = require('fs'),
   log = debug("nemo-accessibility:log"),
-  error = debug("nemo-accessibility:error");
+  error = debug("nemo-accessibility:error"),
+  path = require('path');
 
 module.exports = {
 
@@ -15,7 +16,7 @@ module.exports = {
         var d = nemo.wd.promise.defer();
         // var driver = options && options.element ? options.element : nemo.driver;
          var driver = nemo.driver;
-        var scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html'));
+         var scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html'));
 
         log('api url', argObj.accessibilityApiUrl);
         log('engine', argObj.engine);
@@ -72,7 +73,8 @@ module.exports = {
       } else{
           switch(argObj.engine) {
               case 'axe':
-                var scriptSource = fs.readFileSync('lib/engines/axe/axe.js', 'utf8');
+                var filePath = path.join(__dirname, './lib/engines/axe/axe.js');
+                var scriptSource = fs.readFileSync(filePath, 'utf8');
                 driver.executeScript(scriptSource)
                     .then(function(){
                         driver.switchTo().defaultContent();
@@ -95,7 +97,8 @@ module.exports = {
                     })
                   break;
               case 'htmlcs':
-                var scriptSource = fs.readFileSync('lib/engines/htmlcs/HTMLCS.js', 'utf8');
+                var filePath = path.join(__dirname, './lib/engines/htmlcs/HTMLCS.js');
+                var scriptSource = fs.readFileSync(filePath, 'utf8');              
                 driver.executeScript(scriptSource)
                     .then(function(){
                         driver.switchTo().defaultContent();
@@ -113,7 +116,8 @@ module.exports = {
                       })
                   break;
               case 'chrome':
-                var scriptSource = fs.readFileSync('lib/engines/chrome/axs_testing.js', 'utf8');
+                var filePath = path.join(__dirname, './lib/engines/chrome/axs_testing.js');
+                var scriptSource = fs.readFileSync(filePath, 'utf8');              
                 driver.executeScript(scriptSource)
                     .then(function(){
                         driver.switchTo().defaultContent();
@@ -164,9 +168,7 @@ module.exports = {
               //
           } //end switch
       } // end else 
-
-
-
+      
         return d;
       }   //scan function
     }    //returnObj
