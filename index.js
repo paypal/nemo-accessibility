@@ -13,7 +13,9 @@ module.exports = {
     returnObj.accessibility = {
       'scan': function (options) {
         var d = nemo.wd.promise.defer();
-        var driver = options && options.element ? options.element : nemo.driver;
+        // var driver = options && options.element ? options.element : nemo.driver;
+         var driver = nemo.driver;
+        var scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html'));
 
         log('api url', argObj.accessibilityApiUrl);
         log('engine', argObj.engine);
@@ -21,7 +23,6 @@ module.exports = {
       if (argObj.accessibilityApiUrl) {
         var errLevel = options && options.errLevel || '1',
             level = options && options.level || 'WCAG2AA',
-            scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
             engine = options && options.engine ? options.engine : '',
             output = options && options.output ? options.output : '',
             project = options && options.project || '',
@@ -68,101 +69,104 @@ module.exports = {
             d.fulfill(responseBody);
           });
         });   //scanElement.getAttribute
-      }
+      } else{
+          switch(argObj.engine) {
+              case 'axe':
+                var scriptSource = fs.readFileSync('lib/engines/axe/axe.js', 'utf8');
+                driver.executeScript(scriptSource)
+                    .then(function(){
+                        driver.switchTo().defaultContent();
+                         driver.executeAsyncScript(function() {
+                           var callback = arguments[arguments.length - 1];
+                            window.axe.a11yCheck(document, null, function (results) {
+                                callback(results);
+                            });
 
-      switch(argObj.engine) {
-          case 'axe':
-            var scriptSource = fs.readFileSync('lib/engines/axe/axe.js', 'utf8');
-            driver.executeScript(scriptSource)
-                .then(function(){
-                    driver.switchTo().defaultContent();
-                     driver.executeAsyncScript(function() {
-                       var callback = arguments[arguments.length - 1];
-                        window.axe.a11yCheck(document, null, function (results) {
-                            callback(results);
-                        });
+                         }).then(function(msg) {
+                              // console.log(msg);
+                              var violations = msg.violations
+                              for (var i=violations.length;i--;){
+                                  delete violations[i].helpUrl;
+                                  delete violations[i].tags;              
+                                  delete violations[i].nodes;
+                              } 
+                              console.log(violations);
+                            });
+                    })
+                  break;
+              case 'htmlcs':
+                var scriptSource = fs.readFileSync('lib/engines/htmlcs/HTMLCS.js', 'utf8');
+                driver.executeScript(scriptSource)
+                    .then(function(){
+                        driver.switchTo().defaultContent();
+                         driver.executeAsyncScript(function() {
+                           var callback = arguments[arguments.length - 1];
+                            HTMLCS.process('WCAG2AA', document, function() {
+                              var results = HTMLCS.getMessages();
+                              callback(results);
+                            }) 
 
-                     }).then(function(msg) {
-                          // console.log(msg);
-                          var violations = msg.violations
-                          for (var i=violations.length;i--;){
-                              delete violations[i].helpUrl;
-                              delete violations[i].tags;              
-                              delete violations[i].nodes;
-                          } 
-                          console.log(violations);
-                        });
-                })
-              break;
-          case 'htmlcs':
-            var scriptSource = fs.readFileSync('lib/engines/htmlcs/HTMLCS.js', 'utf8');
-            driver.executeScript(scriptSource)
-                .then(function(){
-                    driver.switchTo().defaultContent();
-                     driver.executeAsyncScript(function() {
-                       var callback = arguments[arguments.length - 1];
-                        HTMLCS.process('WCAG2AA', document, function() {
-                          var results = HTMLCS.getMessages();
-                          callback(results);
-                        }) 
-
-                     }).then(function(msgs) {
-                            var voila = processResultsHTMLCS(msgs);
-                            console.log(voila)
-                      });
-                  })
-              break;
-          case 'chrome':
-            var scriptSource = fs.readFileSync('lib/engines/chrome/axs_testing.js', 'utf8');
-            driver.executeScript(scriptSource)
-                .then(function(){
-                    driver.switchTo().defaultContent();
-                     driver.executeAsyncScript(function() {
-                       var callback = arguments[arguments.length - 1];
-                        var configuration = new axs.AuditConfiguration();
-                        configuration.showUnsupportedRulesWarning = false;
-                        var results = axs.Audit.run(configuration);
-                        var audit = results.map(function (result) {
-                            var DOMElements = result.elements;
-                            var message = '';
-                            if(result.result ==='FAIL'){
-                              if (DOMElements !== undefined) {
-                                  var maxElements = Math.min(DOMElements.length, 5);
-                                  for (var i = 0; i < maxElements; i++) {
-                                      var el = DOMElements[i];
-                                      message += '\n';
-                                      try {
-                                          message += axs.utils.getQuerySelectorText(el);
-                                      } catch (err) {
-                                          message += ' tagName:' + el.tagName;
-                                          message += ' id:' + el.id;
+                         }).then(function(msgs) {
+                                var voila = processResultsHTMLCS(msgs);
+                                console.log(voila)
+                          });
+                      })
+                  break;
+              case 'chrome':
+                var scriptSource = fs.readFileSync('lib/engines/chrome/axs_testing.js', 'utf8');
+                driver.executeScript(scriptSource)
+                    .then(function(){
+                        driver.switchTo().defaultContent();
+                         driver.executeAsyncScript(function() {
+                           var callback = arguments[arguments.length - 1];
+                            var configuration = new axs.AuditConfiguration();
+                            configuration.showUnsupportedRulesWarning = false;
+                            var results = axs.Audit.run(configuration);
+                            var audit = results.map(function (result) {
+                                var DOMElements = result.elements;
+                                var message = '';
+                                if(result.result ==='FAIL'){
+                                  if (DOMElements !== undefined) {
+                                      var maxElements = Math.min(DOMElements.length, 5);
+                                      for (var i = 0; i < maxElements; i++) {
+                                          var el = DOMElements[i];
+                                          message += '\n';
+                                          try {
+                                              message += axs.utils.getQuerySelectorText(el);
+                                          } catch (err) {
+                                              message += ' tagName:' + el.tagName;
+                                              message += ' id:' + el.id;
+                                          }
                                       }
                                   }
-                              }
-                              return {
-                                  heading: result.rule.heading,
-                                  result: result.result,
-                                  severity: result.rule.severity,
-                                  elements: message
-                              };
-                            }   //Return Failures only
+                                  return {
+                                      heading: result.rule.heading,
+                                      result: result.result,
+                                      severity: result.rule.severity,
+                                      elements: message
+                                  };
+                                }   //Return Failures only
 
-                        });
-                        for (var i=audit.length;i--;){
-                          if (audit[i] == null) audit.splice(i,1);
-                        }
-                        callback(audit);
+                            });
+                            for (var i=audit.length;i--;){
+                              if (audit[i] == null) audit.splice(i,1);
+                            }
+                            callback(audit);
 
-                     }).then(function(audit) {
-                          console.log(audit)
-                        });
-                })
+                         }).then(function(audit) {
+                              console.log(audit)
+                            });
+                    })
 
 
-              break;              
-          default:
-          //
-      }
+                  break;              
+              default:
+              //
+          } //end switch
+      } // end else 
+
+
+
         return d;
       }   //scan function
     }    //returnObj
