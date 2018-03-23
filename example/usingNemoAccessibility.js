@@ -5,9 +5,13 @@ var nemo =  Nemo(process.cwd()+'/example',function(err){
     nemo.driver.get('http://www.paypal.com');
     console.log('Nemo initialized successfully');
     var options = {
-      'engine': 'htmlcs'
+      'engine': 'htmlcs',
+      'project': 'givingfund',
+      'page': 'HomePage'   
     };
+
     nemo.accessibility.scan(options).then(function (result) {
+      console.log(result);
       var file = process.cwd() + '/example/report/chrome1.html';
       fs.writeFile(file, result, function (err) {
         if (err) {
