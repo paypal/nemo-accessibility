@@ -6,6 +6,10 @@ var request = require("request"),
   error = debug("nemo-accessibility:error"),
   path = require('path');
 
+  var jsonOp = {};
+  var resultArr = [];
+  var retStr ='';
+
 module.exports = {
 
   "setup": function (argObj, nemo, callback) {
@@ -15,30 +19,27 @@ module.exports = {
       'scan': function (options) {
         var d = nemo.wd.promise.defer();
         // var driver = options && options.element ? options.element : nemo.driver;
-         var driver = nemo.driver;
-         var scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html'));
+         var driver = nemo.driver,
+          scanElement = options && options.element ? options.element : driver.findElement(nemo.wd.By.tagName('html')),
+          project = options && options.project || '',
+          page = options && options.page || '' ,          
+          errLevel = options && options.errLevel || '1',
+          level = options && options.level || 'WCAG2AA';
 
-        log('api url', argObj.accessibilityApiUrl);
-        log('engine', argObj.engine);
+          log('api url', argObj.accessibilityApiUrl);
+          log('engine', argObj.engine);
 
       if (argObj.accessibilityApiUrl) {
-        var errLevel = options && options.errLevel || '1',
-            level = options && options.level || 'WCAG2AA',
-            engine = options && options.engine ? options.engine : '',
+        var engine = options && options.engine ? options.engine : '',
             output = options && options.output ? options.output : '',
-            project = options && options.project || '',
-            page = options && options.page || '' ,
             accessibilityApiUrl = argObj.accessibilityApiUrl;
 
         scanElement.getAttribute('innerHTML').then(function (source) {
-          // log('Page source:', source);
+
           log('Now scanning with error level ', errLevel);
           log('API engine', engine);
           log('Accessibility url ', accessibilityApiUrl);
-          if (!accessibilityApiUrl) {
-            error('You must specify accessibilityApiUrl as a plugin argument');
-            d.reject(new Error('You must specify accessibilityApiUrl as a plugin argument'));
-          }
+
           var body = {
               'source': source,
               'errLevel': errLevel,
@@ -71,6 +72,10 @@ module.exports = {
           });
         });   //scanElement.getAttribute
       } else{
+          // console.log('Standalone: ', project, page, argObj.engine);
+          jsonOp["project"] = project;
+          jsonOp["page"] = page;
+
           switch(argObj.engine) {
               case 'axe':
                 var filePath = path.join(__dirname, './lib/engines/axe/axe.js');
@@ -92,7 +97,10 @@ module.exports = {
                                   delete violations[i].tags;              
                                   delete violations[i].nodes;
                               } 
-                              console.log(violations);
+                              retStr = processResultsAxe(violations ,'Axe Accessibility Plugin');
+                              // console.log('retstr', retStr);
+                              d.fulfill(retStr);
+
                             });
                     })
                   break;
@@ -111,7 +119,8 @@ module.exports = {
 
                          }).then(function(msgs) {
                                 var voila = processResultsHTMLCS(msgs);
-                                console.log(voila)
+                                // console.log(voila)
+                                d.fulfill(voila);
                           });
                       })
                   break;
@@ -158,7 +167,10 @@ module.exports = {
                             callback(audit);
 
                          }).then(function(audit) {
-                              console.log(audit)
+                              // console.log(audit)
+                              jsonOp["results"] = audit;
+                              var retobj = JSON.stringify(jsonOp);
+                              d.fulfill(retobj);
                             });
                     })
 
@@ -229,8 +241,28 @@ module.exports = {
             content.push(temp_obj);
           } //close if error  
         } //Closing for loop
-        return content;
+        // return content;
+        jsonOp["results"] = content;
+        return JSON.stringify(jsonOp);        
     } catch (e) {
-              console.log('Error:', e.toString());
+        console.log('Error:', e.toString());
     }
   }
+
+  function processResultsAxe(arr){
+    var msg;
+    if (arr.length === 0) {
+        resultArr.push({'message':'No violations found'});
+    }           
+    for (var key in arr) {
+        msg = arr[key];
+        var temp_obj = {};
+        temp_obj["id"] = msg.id;
+        temp_obj["description"] = msg.description;
+        temp_obj["help"] = msg.help;
+        temp_obj["impact"] = msg.impact;
+        resultArr.push(temp_obj);
+    }
+    jsonOp["results"] = resultArr;
+    return JSON.stringify(jsonOp);  
+  } 
