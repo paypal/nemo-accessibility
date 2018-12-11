@@ -42,7 +42,7 @@ Once `nemo-accessibility` plugin is registered, you should now have `nemo.access
 ## Example
 In this project a sample `nemo-accessibility` plugin test is written under `example/usingNemoAccessibility.js`. Once scanning is complete, accessibility results will be written to a file `example/accessibility.json`
 
-##Support
+## Support
 Please file a [Nemo a11y plugin issue][1]  for any nemo plugin related questions or file a [issue for AATT][2] for any AATT related questions
 
 [1]: https://github.com/paypal/nemo-accessibility/issues "File a ticket for Nemo a11y plugin"
