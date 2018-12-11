@@ -9,9 +9,12 @@ var request = require("request"),
   var jsonOp = {};
   var resultArr = [];
   var retStr ='';
+  var axeResults = require('./src/axe');
+  var htmlcsResults = require('./src/htmlcs');
+  var chromeResults = require('./src/chrome');
 
 module.exports = {
-
+  "results":"",
   "setup": function (argObj, nemo, callback) {
     var returnObj = nemo;
 
@@ -71,116 +74,34 @@ module.exports = {
             d.fulfill(responseBody);
           });
         });   //scanElement.getAttribute
-      } else{
+      } else {
           // console.log('Standalone: ', project, page, argObj.engine);
           jsonOp["project"] = project;
           jsonOp["page"] = page;
 
           switch(argObj.engine) {
-              case 'axe':
-                var filePath = path.join(__dirname, './lib/engines/axe/axe.js');
-                var scriptSource = fs.readFileSync(filePath, 'utf8');
-                driver.executeScript(scriptSource)
-                    .then(function(){
-                        driver.switchTo().defaultContent();
-                         driver.executeAsyncScript(function() {
-                           var callback = arguments[arguments.length - 1];
-                            window.axe.a11yCheck(document, null, function (results) {
-                                callback(results);
-                            });
-
-                         }).then(function(msg) {
-                              // console.log(msg);
-                              var violations = msg.violations
-                              for (var i=violations.length;i--;){
-                                  delete violations[i].helpUrl;
-                                  delete violations[i].tags;              
-                                  delete violations[i].nodes;
-                              } 
-                              retStr = processResultsAxe(violations ,'Axe Accessibility Plugin');
-                              // console.log('retstr', retStr);
-                              d.fulfill(retStr);
-
-                            });
-                    })
-                  break;
               case 'htmlcs':
-                var filePath = path.join(__dirname, './lib/engines/htmlcs/HTMLCS.js');
-                var scriptSource = fs.readFileSync(filePath, 'utf8');              
-                driver.executeScript(scriptSource)
-                    .then(function(){
-                        driver.switchTo().defaultContent();
-                         driver.executeAsyncScript(function() {
-                           var callback = arguments[arguments.length - 1];
-                            HTMLCS.process('WCAG2AA', document, function() {
-                              var results = HTMLCS.getMessages();
-                              callback(results);
-                            }) 
-
-                         }).then(function(msgs) {
-                                var voila = processResultsHTMLCS(msgs);
-                                // console.log(voila)
-                                d.fulfill(voila);
-                          });
+                      htmlcsResults.getHtmlcsResults(argObj, nemo, callback)
+                       .then(function(results){
+                        d.fulfill(results);
                       })
                   break;
               case 'chrome':
-                var filePath = path.join(__dirname, './lib/engines/chrome/axs_testing.js');
-                var scriptSource = fs.readFileSync(filePath, 'utf8');              
-                driver.executeScript(scriptSource)
-                    .then(function(){
-                        driver.switchTo().defaultContent();
-                         driver.executeAsyncScript(function() {
-                           var callback = arguments[arguments.length - 1];
-                            var configuration = new axs.AuditConfiguration();
-                            configuration.showUnsupportedRulesWarning = false;
-                            var results = axs.Audit.run(configuration);
-                            var audit = results.map(function (result) {
-                                var DOMElements = result.elements;
-                                var message = '';
-                                if(result.result ==='FAIL'){
-                                  if (DOMElements !== undefined) {
-                                      var maxElements = Math.min(DOMElements.length, 5);
-                                      for (var i = 0; i < maxElements; i++) {
-                                          var el = DOMElements[i];
-                                          message += '\n';
-                                          try {
-                                              message += axs.utils.getQuerySelectorText(el);
-                                          } catch (err) {
-                                              message += ' tagName:' + el.tagName;
-                                              message += ' id:' + el.id;
-                                          }
-                                      }
-                                  }
-                                  return {
-                                      heading: result.rule.heading,
-                                      result: result.result,
-                                      severity: result.rule.severity,
-                                      elements: message
-                                  };
-                                }   //Return Failures only
-
-                            });
-                            for (var i=audit.length;i--;){
-                              if (audit[i] == null) audit.splice(i,1);
-                            }
-                            callback(audit);
-
-                         }).then(function(audit) {
-                              // console.log(audit)
-                              jsonOp["results"] = audit;
-                              var retobj = JSON.stringify(jsonOp);
-                              d.fulfill(retobj);
-                            });
-                    })
-
-
-                  break;              
+                      chromeResults.getChromeResults(argObj, nemo, callback)
+                       .then(function(results){
+                          d.fulfill(results);
+                       })
+                  break;
+              case 'axe':
               default:
+                axeResults.getAxeResults(argObj, nemo, callback)
+                  .then(function(results){
+                    d.fulfill(results);
+                })                      
               //
           } //end switch
       } // end else 
-      
+        
         return d;
       }   //scan function
     }    //returnObj
@@ -188,81 +109,3 @@ module.exports = {
   } //setup function
 };    //module.export
 
-
-  function processResultsHTMLCS(msgs){
-    var content = [];
-    var heading = "";
-    var type = '';
-    var outerHTML = '';
-
-    try {
-        var principles = {
-                'Principle1': 'Perceivable',
-                'Principle2': 'Operable',
-                'Principle3': 'Understandable',
-                'Principle4': 'Robust'
-            };
-
-        if (msgs.length === 0) {
-            content.push({'message':'No violations found'});
-            return;
-        }
-
-        var errors   = 0;
-        var count=1;
-
-        for (var i = 0; i < msgs.length; i++) {
-            var msg = msgs[i];
-            var temp_obj = {};
-          // console.log(msg.element);
-          if(msg.type ===1){      //Error only
-            var msgParts   = msg.code.split('.');
-            var principle  = msgParts[1];
-            var sc         = msgParts[3].split('_').slice(0, 3).join('_');
-            var techniques = msgParts[4];
-            techniques     = techniques.split(',');
-
-            msgParts.shift();
-            msgParts.unshift('[Standard]');
-            var noStdMsgParts = msgParts.join('.');
-            errors += 1;
-            temp_obj["type"] = 'error';
-            temp_obj["msg"] = msg.msg;
-            temp_obj["code"] = msg.element.outerHTML;
-            temp_obj["principle"] = '<a href="http://www.w3.org/TR/WCAG20/#' + principles[principle].toLowerCase() + '" target="_blank">' + principles[principle] + '</a>';
-
-            var technique='';
-            for (var j = 0; j < techniques.length; j++) {
-                technique += '<a href="http://www.w3.org/TR/WCAG20-TECHS/' + techniques[j] + '" target="_blank">' + techniques[j] + '</a>';
-            }
-            temp_obj["techniques"] = technique;
-
-            count++;
-            content.push(temp_obj);
-          } //close if error  
-        } //Closing for loop
-        // return content;
-        jsonOp["results"] = content;
-        return JSON.stringify(jsonOp);        
-    } catch (e) {
-        console.log('Error:', e.toString());
-    }
-  }
-
-  function processResultsAxe(arr){
-    var msg;
-    if (arr.length === 0) {
-        resultArr.push({'message':'No violations found'});
-    }           
-    for (var key in arr) {
-        msg = arr[key];
-        var temp_obj = {};
-        temp_obj["id"] = msg.id;
-        temp_obj["description"] = msg.description;
-        temp_obj["help"] = msg.help;
-        temp_obj["impact"] = msg.impact;
-        resultArr.push(temp_obj);
-    }
-    jsonOp["results"] = resultArr;
-    return JSON.stringify(jsonOp);  
-  } 
