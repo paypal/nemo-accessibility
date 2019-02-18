@@ -1,28 +1,18 @@
 {
   "name": "nemo-accessibility",
-  "version": "2.1.4",
+  "version": "4.0.0",
   "dependencies": {
-    "debug": "^2.2.0",
-    "nemo-view": "^2.0.0",
-    "request": "^2.48.0"
-  },
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "mocha": "^2.0.1",
-    "nemo": "^2.0.0"
+    "nconf": "^0.10.0",
+    "nemo-core": "^1.1.0",
+    "nemo-view": "^3.1.0",
+    "request": "^2.88.0"
   },
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "grunt"
-  },
-  "engines": {
-    "node": ">= 4"
-  },
-  "peerDependencies": {
-    "nemo": ">= 2.x.x <3.x.x"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -34,6 +24,9 @@
     "plugins",
     "paet"
   ],
-  "author": "Nilesh Kulkarni <nikulkarni@paypal.com>",
-  "license": "MIT"
+  "author": "Nilesh Kulkarni <nikulkarni@paypal.com>, Prem Nawaz Khan <https://github.com/mpnkhan>",
+  "license": "MIT",
+  "devDependencies": {
+    "debug": "^4.1.1"
+  }
 }

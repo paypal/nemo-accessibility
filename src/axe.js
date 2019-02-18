@@ -1,6 +1,5 @@
 'use strict';
-var request = require("request"),
-  debug = require("debug"),
+var   debug = require("debug"),
   fs = require('fs'),
   log = debug("nemo-accessibility:log"),
   error = debug("nemo-accessibility:error"),
@@ -14,7 +13,7 @@ var request = require("request"),
       var filePath = path.join(__dirname, '../lib/engines/axe/axe.js');
       var scriptSource = fs.readFileSync(filePath, 'utf8');
       var driver = nemo.driver;
-      var d = nemo.wd.promise.defer();       
+    
       driver.executeScript(scriptSource)
         .then(function(){
             driver.switchTo().defaultContent();
@@ -23,7 +22,6 @@ var request = require("request"),
                 window.axe.run(document, function(err, results) {
                     callback(results);
                 });
-
              }).then(function(msg) {
                   // console.log(msg);
                   var violations = msg.violations
@@ -34,9 +32,7 @@ var request = require("request"),
                   } 
                   retStr = processResultsAxe(violations ,'Axe Accessibility Plugin');
                   resolve(retStr);
-                  d.fulfill(retStr);
-
-                });
+                })
         })
     })  //end return promise  
   }

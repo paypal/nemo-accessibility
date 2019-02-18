@@ -12,7 +12,6 @@ var request = require("request"),
     return new Promise(function(resolve, reject) {
       var retStr ='';
       var driver = nemo.driver;
-      var d = nemo.wd.promise.defer();
       var filePath = path.join(__dirname, '../lib/engines/chrome/axs_testing.js');
       var scriptSource = fs.readFileSync(filePath, 'utf8');              
       driver.executeScript(scriptSource)
@@ -59,8 +58,7 @@ var request = require("request"),
                   jsonOp["results"] = audit;
                   var retobj = JSON.stringify(jsonOp);
                   resolve(retobj);
-                  d.fulfill(retobj);
-                });
+                })
         })
 
     })  //end return promise  

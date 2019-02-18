@@ -12,60 +12,28 @@ var
   module.exports = {
      getHtmlcsResults: function (argObj, nemo, callback) {
       return new Promise(function(resolve, reject) {
-
-    var filePath = path.join(__dirname, '../lib/engines/htmlcs/HTMLCS.js');
-    var scriptSource = fs.readFileSync(filePath, 'utf8');
-    var driver = nemo.driver;
-    var d = nemo.wd.promise.defer(); 
-    var violations = null;         
-    driver.executeScript(scriptSource)
-      .then(function(){
-          driver.switchTo().defaultContent();
-           driver.executeAsyncScript(function() {
-             var callback = arguments[arguments.length - 1];
-              HTMLCS.process('WCAG2AA', document, function() {
-                var results = HTMLCS.getMessages();
-                callback(results);
-              }) 
-
-           }).then(function(msgs) {
-                  violations = processResultsHTMLCS(msgs);
-                  resolve(violations);
-                  d.fulfill(violations);
-            });
-        })
+        var filePath = path.join(__dirname, '../lib/engines/htmlcs/HTMLCS.js');
+        var scriptSource = fs.readFileSync(filePath, 'utf8');
+        var driver = nemo.driver;
+        var violations = null;         
+        driver.executeScript(scriptSource)
+          .then(function(){
+              driver.switchTo().defaultContent();
+               driver.executeAsyncScript(function() {
+                 var callback = arguments[arguments.length - 1];
+                  HTMLCS.process('WCAG2AA', document, function() {
+                    var results = HTMLCS.getMessages();
+                    callback(results);
+                  }) 
+               }).then(function(msgs) {
+                      violations = processResultsHTMLCS(msgs);
+                      resolve(violations);
+                });
+            })
       })  //end return promise
     }
   }
-  
-
-  function getHtmlcsResults(argObj, nemo, callback){
-
-    var promise1 = new Promise(function(resolve, reject) {
-    var filePath = path.join(__dirname, '../lib/engines/htmlcs/HTMLCS.js');
-    var scriptSource = fs.readFileSync(filePath, 'utf8');
-    var driver = nemo.driver;
-    var d = nemo.wd.promise.defer(); 
-    var violations = null;         
-    driver.executeScript(scriptSource)
-      .then(function(){
-          driver.switchTo().defaultContent();
-           driver.executeAsyncScript(function() {
-             var callback = arguments[arguments.length - 1];
-              HTMLCS.process('WCAG2AA', document, function() {
-                var results = HTMLCS.getMessages();
-                callback(results);
-              }) 
-
-           }).then(function(msgs) {
-                  violations = processResultsHTMLCS(msgs);
-                  resolve(violations);
-                  d.fulfill(violations);
-            });
-        })
-    });      
-  }
-
+ 
   function processResultsHTMLCS(msgs){
     var content = [];
     var heading = "";
