@@ -6,6 +6,7 @@
 ## Installation
 
 `npm install nemo-accessibility --save-dev`
+
 `DEBUG=nemo* node example/usingNemoAccessibility.js`
 
 ## Configuration
