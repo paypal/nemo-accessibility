@@ -24,7 +24,10 @@
     "plugins",
     "paet"
   ],
-  "author": "Nilesh Kulkarni <nikulkarni@paypal.com>, Prem Nawaz Khan <https://github.com/mpnkhan>",
+    "author": [
+    "Nilesh Kulkarni <nikulkarni@paypal.com>",
+    "Prem Nawaz Khan <mpnkhan@hotmail.com>"
+  ],
   "license": "MIT",
   "devDependencies": {
     "debug": "^4.1.1"
