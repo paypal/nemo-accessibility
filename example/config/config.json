@@ -8,8 +8,9 @@
       "arguments": [
                     {
                        "engine":"axe"
-                        // "engine":"chrome"
-                      // "engine":"htmlcs"
+                       , "output": "html"
+                       //, "engine":"chrome"
+                      //, "engine":"htmlcs"
                     }
                   ]
     },

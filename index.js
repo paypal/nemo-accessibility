@@ -24,6 +24,7 @@ function setup (argObj, nemo, callback) {
           page = options && options.page || '' ,          
           errLevel = options && options.errLevel || '1',
           level = options && options.level || 'WCAG2AA';
+          options.format = options && options.format || 'json';
 
           log('engine', argObj.engine);
           
@@ -40,7 +41,7 @@ function setup (argObj, nemo, callback) {
                   break;
               case 'axe':
               default:
-                   results = await axeResults.getAxeResults(argObj, nemo, callback)
+                   results = await axeResults.getAxeResults(argObj, nemo, options, callback)
               //
           } //end switch
         return results

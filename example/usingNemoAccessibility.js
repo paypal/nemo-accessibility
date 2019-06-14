@@ -12,7 +12,7 @@ const nemo =  Nemo(process.cwd()+'/example', function(err){
   })
 
     const options = {
-      'page': 'HomePage'   
+      'page': 'HomePage' 
     }
     
   nemo.accessibility.scan(options).then(function (result) {
